@@ -1,0 +1,44 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "cifuzz" ]
+  pull_request:
+    branches: [ "cifuzz" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a set of commands using the runners shell
+      - name: Building a docker container
+        run: |
+          echo Hello, container is building now...!
+          pwd
+          ls -a
+          echo starting to build docker images...
+          docker build --no-cache -t pdfwriter .
+          echo "docker images output..."
+          docker images 
+          echo "output from inside container path.."
+          docker run --rm pdfwriter sh -c "ls -lahtr " 
+          docker run --rm pdfwriter sh -c "pwd"
+
+          echo docker build completed..
+          docker run --rm pdfwriter sh -c "cifuzz run pdf_fuzz --use-sandbox=false > fuzzing.log 2>&1 && cat fuzzing.log"
+
