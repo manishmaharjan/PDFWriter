@@ -28,17 +28,5 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Building a docker container
         run: |
-          echo Hello, container is building now...!
-          pwd
-          ls -a
-          echo starting to build docker images...
-          docker build --no-cache -t pdfwriter .
-          echo "docker images output..."
-          docker images 
-          echo "output from inside container path.."
-          docker run --rm pdfwriter sh -c "ls -lahtr " 
-          docker run --rm pdfwriter sh -c "pwd"
-
-          echo docker build completed..
-          docker run --rm pdfwriter sh -c "cifuzz run pdf_fuzz --use-sandbox=false > fuzzing.log 2>&1 && cat fuzzing.log"
-
+          chmod +x ${GITHUB_WORKSPACE}/script.sh
+          ${GITHUB_WORKSPACE}/script.sh
